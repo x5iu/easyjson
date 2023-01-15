@@ -1,8 +1,8 @@
 package easyjson
 
 import (
-	jlexer "github.com/mailru/easyjson/jlexer"
-	"github.com/mailru/easyjson/jwriter"
+	jlexer "github.com/x5iu/easyjson/jlexer"
+	"github.com/x5iu/easyjson/jwriter"
 )
 
 // UnknownFieldsProxy implemets UnknownsUnmarshaler and UnknownsMarshaler

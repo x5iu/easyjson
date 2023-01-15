@@ -6,8 +6,8 @@ import (
 	"net"
 	"time"
 
-	"github.com/mailru/easyjson"
-	"github.com/mailru/easyjson/opt"
+	"github.com/x5iu/easyjson"
+	"github.com/x5iu/easyjson/opt"
 )
 
 type PrimitiveTypes struct {
@@ -88,40 +88,32 @@ var primitiveTypesValue = PrimitiveTypes{
 
 var primitiveTypesString = "{" +
 	`"String":"test","Bool":true,` +
-
 	`"Int":` + fmt.Sprint(math.MinInt32) + `,` +
 	`"Int8":` + fmt.Sprint(math.MinInt8) + `,` +
 	`"Int16":` + fmt.Sprint(math.MinInt16) + `,` +
 	`"Int32":` + fmt.Sprint(math.MinInt32) + `,` +
 	`"Int64":` + fmt.Sprint(int64(math.MinInt64)) + `,` +
-
 	`"Uint":` + fmt.Sprint(uint32(math.MaxUint32)) + `,` +
 	`"Uint8":` + fmt.Sprint(math.MaxUint8) + `,` +
 	`"Uint16":` + fmt.Sprint(math.MaxUint16) + `,` +
 	`"Uint32":` + fmt.Sprint(uint32(math.MaxUint32)) + `,` +
 	`"Uint64":` + fmt.Sprint(uint64(math.MaxUint64)) + `,` +
-
 	`"IntString":"` + fmt.Sprint(math.MinInt32) + `",` +
 	`"Int8String":"` + fmt.Sprint(math.MinInt8) + `",` +
 	`"Int16String":"` + fmt.Sprint(math.MinInt16) + `",` +
 	`"Int32String":"` + fmt.Sprint(math.MinInt32) + `",` +
 	`"Int64String":"` + fmt.Sprint(int64(math.MinInt64)) + `",` +
-
 	`"UintString":"` + fmt.Sprint(uint32(math.MaxUint32)) + `",` +
 	`"Uint8String":"` + fmt.Sprint(math.MaxUint8) + `",` +
 	`"Uint16String":"` + fmt.Sprint(math.MaxUint16) + `",` +
 	`"Uint32String":"` + fmt.Sprint(uint32(math.MaxUint32)) + `",` +
 	`"Uint64String":"` + fmt.Sprint(uint64(math.MaxUint64)) + `",` +
-
 	`"Float32":` + fmt.Sprint(1.5) + `,` +
 	`"Float64":` + fmt.Sprint(math.MaxFloat64) + `,` +
-
 	`"Float32String":"` + fmt.Sprint(1.5) + `",` +
 	`"Float64String":"` + fmt.Sprint(math.MaxFloat64) + `",` +
-
 	`"Ptr":"bla",` +
 	`"PtrNil":null` +
-
 	"}"
 
 type (
@@ -194,22 +186,18 @@ var namedPrimitiveTypesValue = NamedPrimitiveTypes{
 var namedPrimitiveTypesString = "{" +
 	`"String":"test",` +
 	`"Bool":true,` +
-
 	`"Int":` + fmt.Sprint(math.MinInt32) + `,` +
 	`"Int8":` + fmt.Sprint(math.MinInt8) + `,` +
 	`"Int16":` + fmt.Sprint(math.MinInt16) + `,` +
 	`"Int32":` + fmt.Sprint(math.MinInt32) + `,` +
 	`"Int64":` + fmt.Sprint(int64(math.MinInt64)) + `,` +
-
 	`"Uint":` + fmt.Sprint(uint32(math.MaxUint32)) + `,` +
 	`"Uint8":` + fmt.Sprint(math.MaxUint8) + `,` +
 	`"Uint16":` + fmt.Sprint(math.MaxUint16) + `,` +
 	`"Uint32":` + fmt.Sprint(uint32(math.MaxUint32)) + `,` +
 	`"Uint64":` + fmt.Sprint(uint64(math.MaxUint64)) + `,` +
-
 	`"Float32":` + fmt.Sprint(1.5) + `,` +
 	`"Float64":` + fmt.Sprint(math.MaxFloat64) + `,` +
-
 	`"Ptr":"bla",` +
 	`"PtrNil":null` +
 	"}"
@@ -300,26 +288,19 @@ var structsValue = Structs{
 
 var structsString = "{" +
 	`"Value2":5,` +
-
 	`"substruct":{"Value":"test1","Value2":"v"},` +
 	`"Sub2":{"Value":"test2","Value2":"v2"},` +
 	`"SubNil":null,` +
-
 	`"SubSlice":[{"Value":"s1","Value2":""},{"Value":"s2","Value2":""}],` +
 	`"SubSliceNil":null,` +
-
 	`"SubPtrSlice":[{"Value":"p1","Value2":""},{"Value":"p2","Value2":""}],` +
 	`"SubPtrSliceNil":null,` +
-
 	`"SubA1":{"Value":"test3","Value2":"v3"},` +
 	`"SubA2":{"Value":"test4","Value2":"v4"},` +
-
 	`"Anonymous":{"V":"bla","I":5},` +
 	`"Anonymous1":{"V":"bla1"},` +
-
 	`"AnonymousSlice":[{"V":1},{"V":2}],` +
 	`"AnonymousPtrSlice":[{"V":3},{"V":4}],` +
-
 	`"Slice":["test5","test6"],` +
 
 	// Embedded fields go last.
