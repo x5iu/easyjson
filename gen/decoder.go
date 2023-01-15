@@ -418,7 +418,7 @@ func getStructFields(t reflect.Type) ([]reflect.StructField, error) {
 			}
 			efields = mergeStructFields(efields, fs)
 		} else if (t1.Kind() >= reflect.Bool && t1.Kind() < reflect.Complex128) || t1.Kind() == reflect.String {
-			// HACK
+			// HACK:
 			// to support private fields
 
 			// if strings.Contains(f.Name, ".") || unicode.IsUpper([]rune(f.Name)[0]) {
@@ -431,6 +431,13 @@ func getStructFields(t reflect.Type) ([]reflect.StructField, error) {
 
 	for i := 0; i < t.NumField(); i++ {
 		f := t.Field(i)
+
+		// HACK:
+		// skip those fields without "json" tag
+		if _, exist := f.Tag.Lookup("json"); !exist {
+			continue
+		}
+
 		tags := parseFieldTags(f)
 		if f.Anonymous && tags.name == "" {
 			continue
