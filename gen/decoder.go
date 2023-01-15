@@ -5,11 +5,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/x5iu/easyjson"
 	"reflect"
 	"strings"
-	"unicode"
-
-	"github.com/x5iu/easyjson"
 )
 
 // Target this byte size for initial slice allocation to reduce garbage collection.
@@ -420,9 +418,14 @@ func getStructFields(t reflect.Type) ([]reflect.StructField, error) {
 			}
 			efields = mergeStructFields(efields, fs)
 		} else if (t1.Kind() >= reflect.Bool && t1.Kind() < reflect.Complex128) || t1.Kind() == reflect.String {
-			if strings.Contains(f.Name, ".") || unicode.IsUpper([]rune(f.Name)[0]) {
-				fields = append(fields, f)
-			}
+			// HACK
+			// to support private fields
+
+			// if strings.Contains(f.Name, ".") || unicode.IsUpper([]rune(f.Name)[0]) {
+			// 	fields = append(fields, f)
+			// }
+
+			fields = append(fields, f)
 		}
 	}
 
@@ -433,10 +436,15 @@ func getStructFields(t reflect.Type) ([]reflect.StructField, error) {
 			continue
 		}
 
-		c := []rune(f.Name)[0]
-		if unicode.IsUpper(c) {
-			fields = append(fields, f)
-		}
+		// HACK:
+		// to support private fields
+
+		// c := []rune(f.Name)[0]
+		// if unicode.IsUpper(c) {
+		// 	fields = append(fields, f)
+		// }
+
+		fields = append(fields, f)
 	}
 	return mergeStructFields(efields, fields), nil
 }
