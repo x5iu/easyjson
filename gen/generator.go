@@ -318,9 +318,114 @@ func (g *Generator) getType(t reflect.Type) string {
 		}
 		return t.String()
 	} else if t.PkgPath() == g.pkgPath {
-		return t.Name()
+		return g.fixGeneric(t.Name())
 	}
-	return g.pkgAlias(t.PkgPath()) + "." + t.Name()
+	return g.pkgAlias(t.PkgPath()) + "." + g.fixGeneric(t.Name())
+}
+
+// HACK
+// handle generic type
+func (g *Generator) fixGeneric(name string) string {
+	getPoint := func(s string) int {
+		if guard := strings.Index(s, "["); guard >= 0 {
+			return strings.LastIndex(s[:guard], ".")
+		} else {
+			return strings.LastIndex(s, ".")
+		}
+	}
+
+	if strings.HasSuffix(name, "]") {
+		if start := strings.Index(name, "["); start >= 0 {
+			generics := splitTypes(name[start+1 : len(name)-1])
+			fixed := make([]string, 0, len(generics))
+			for _, generic := range generics {
+				if point := getPoint(generic); point >= 0 {
+					var star string
+					pkg, typ := generic[:point], generic[point+1:]
+					if strings.HasPrefix(generic, "*") {
+						star = "*"
+						pkg = strings.TrimPrefix(pkg, star)
+					}
+					if pkg == g.pkgPath || pkg == "main" {
+						fixed = append(fixed, star+g.fixGeneric(typ))
+					} else {
+						fixed = append(fixed, star+g.pkgAlias(pkg)+"."+g.fixGeneric(typ))
+					}
+				} else {
+					fixed = append(fixed, g.fixGeneric(generic))
+				}
+			}
+			return name[:start] + "[" + strings.Join(fixed, ", ") + "]"
+		}
+	}
+	return name
+}
+
+func splitTypes(generics string) (args []string) {
+	generics = strings.TrimSpace(generics)
+	if len(generics) == 0 {
+		return nil
+	}
+
+	var (
+		bracketStack int
+		doubleQuoted bool
+		singleQuoted bool
+		backQuoted   bool
+		arg          []byte
+	)
+
+	for i := 0; i < len(generics); i++ {
+		switch ch := generics[i]; ch {
+		case ',':
+			if doubleQuoted || singleQuoted || backQuoted ||
+				bracketStack > 0 {
+				arg = append(arg, ch)
+			} else if len(arg) > 0 {
+				args = append(args, string(arg))
+				arg = arg[:0]
+			}
+		case '"':
+			if (i > 0 && generics[i-1] == '\\') || singleQuoted || backQuoted {
+				arg = append(arg, ch)
+			} else {
+				doubleQuoted = !doubleQuoted
+				arg = append(arg, ch)
+			}
+		case '\'':
+			if (i > 0 && generics[i-1] == '\\') || doubleQuoted || backQuoted {
+				arg = append(arg, ch)
+			} else {
+				singleQuoted = !singleQuoted
+				arg = append(arg, ch)
+			}
+		case '`':
+			if (i > 0 && generics[i-1] == '\\') || doubleQuoted || singleQuoted {
+				arg = append(arg, ch)
+			} else {
+				backQuoted = !backQuoted
+				arg = append(arg, ch)
+			}
+		case '[':
+			if !(doubleQuoted || singleQuoted || backQuoted) {
+				bracketStack++
+			}
+			arg = append(arg, ch)
+		case ']':
+			if !(doubleQuoted || singleQuoted || backQuoted) {
+				bracketStack--
+			}
+			arg = append(arg, ch)
+		default:
+			arg = append(arg, ch)
+		}
+	}
+
+	if len(arg) > 0 {
+		args = append(args, string(arg))
+	}
+
+	return args
 }
 
 // escape a struct field tag string back to source code
